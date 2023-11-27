@@ -1,0 +1,67 @@
+MySQL Query 0: SELECT * FROM Users WHERE UserID = 123;
+Average Execution Time: 0.01209397315979004 seconds
+
+Neo4j Query 0: MATCH (u:User) WHERE u.UserID = 123 RETURN u;
+Average Execution Time: 0.3195510387420654 seconds
+
+MySQL Query 1: SELECT Users.Name, Users.Email, Orders.OrderID, Orders.Date, Orders.Status
+    FROM Users
+    JOIN Orders ON Users.UserID = Orders.UserID
+    WHERE Users.UserID = 123 AND Orders.Date >= '2023-01-01';
+
+Average Execution Time: 0.003198671340942383 seconds
+
+Neo4j Query 1: MATCH (u:User {UserID: 123})-[:PLACED]->(o:Order)
+    WHERE o.Date >= '2023-01-01'
+    RETURN u.Name, u.Email, o.OrderID, o.Date, o.Status;
+
+Average Execution Time: 0.32070274353027345 seconds
+
+MySQL Query 2: SELECT Categories.Name, COUNT(Orders.OrderID) as OrderCount
+    FROM Orders
+    JOIN OrderDetails ON Orders.OrderID = OrderDetails.OrderID
+    JOIN Products ON OrderDetails.ProductID = Products.ProductID
+    JOIN Categories ON Products.CategoryID = Categories.CategoryID
+    WHERE Orders.UserID = 123
+    GROUP BY Categories.CategoryID;
+
+Average Execution Time: 0.003199863433837891 seconds
+
+Neo4j Query 2: MATCH (u:User {UserID: 123})-[:PLACED]->(o:Order)-[:CONTAINS]->(p:Product)-[:BELONGS_TO]->(c:Category)
+    RETURN c.Name, COUNT(o) AS OrderCount;
+
+Average Execution Time: 0.3487417221069336 seconds
+
+MySQL Query 3: SELECT p1.ProductID, p2.ProductID, COUNT(*) as Frequency
+    FROM OrderDetails od1
+    JOIN OrderDetails od2 ON od1.OrderID = od2.OrderID AND od1.ProductID < od2.ProductID
+    JOIN Products p1 ON od1.ProductID = p1.ProductID
+    JOIN Products p2 ON od2.ProductID = p2.ProductID
+    GROUP BY p1.ProductID, p2.ProductID
+    ORDER BY Frequency DESC
+    LIMIT 10;
+
+Average Execution Time: 0.31616907119750975 seconds
+
+Neo4j Query 3: MATCH (p1:Product)<-[:CONTAINS]-(o:Order)-[:CONTAINS]->(p2:Product)
+    WHERE ID(p1) < ID(p2)
+    RETURN p1.ProductID, p2.ProductID, COUNT(*) AS Frequency
+    ORDER BY Frequency DESC
+    LIMIT 10;
+
+Average Execution Time: 0.3339348316192627 seconds
+
+MySQL Query 4: SELECT Users.UserID, Users.Name, SUM(Orders.TotalPrice) as TotalSpent
+    FROM Users
+    JOIN Orders ON Users.UserID = Orders.UserID
+    GROUP BY Users.UserID
+    HAVING TotalSpent > 1000;
+
+Average Execution Time: 0.03305482864379883 seconds
+
+Neo4j Query 4: MATCH (u:User)-[:PLACED]->(o:Order)
+    WITH u, SUM(o.TotalPrice) AS TotalSpent
+    WHERE TotalSpent > 1000
+    RETURN u.UserID, u.Name, TotalSpent;
+
+Average Execution Time: 0.3418399810791016 seconds

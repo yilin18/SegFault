@@ -1,0 +1,72 @@
+CREATE TABLE users (
+    UserID int,
+    Name VARCHAR(255),
+    Email VARCHAR(255),
+    Address VARCHAR(255),
+    Password VARCHAR(255)
+);
+
+create table orders (
+    OrderID int,
+    UserID int,
+    Date DATE,
+    TotalPrice float,
+    Status varchar(255)
+);
+
+create table order_details (
+    OrderID int,
+    ProductID int,
+    Quantity int,
+    PricePerUnit float
+);
+
+create table products (
+    ProductID int,
+    Name varchar(255),
+    Description varchar(255),
+    Price float,
+    StockQuantity int,
+    CategoryID int
+);
+
+create table categories (
+    CategoryID int,
+    Name varchar(255),
+    Description varchar(255)
+);
+
+LOAD DATA INFILE '/Users/Oreo/Documents/cs511_advanced_data_management/projects/project_4/data/users.csv'
+INTO TABLE users
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+
+LOAD DATA INFILE '/Users/Oreo/Documents/cs511_advanced_data_management/projects/project_4/data/orders.csv'
+INTO TABLE orders
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+
+LOAD DATA INFILE '/Users/Oreo/Documents/cs511_advanced_data_management/projects/project_4/data/order_details.csv'
+INTO TABLE order_details
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+
+LOAD DATA INFILE '/Users/Oreo/Documents/cs511_advanced_data_management/projects/project_4/data/products.csv'
+INTO TABLE products
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+
+LOAD DATA INFILE '/Users/Oreo/Documents/cs511_advanced_data_management/projects/project_4/data/categories.csv'
+INTO TABLE categories
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
